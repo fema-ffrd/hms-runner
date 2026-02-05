@@ -271,7 +271,7 @@ public class ComputePrecipOnlyAllPlacementsAction {
                 System.out.println("took " + (start-end)/1000 + " seconds");
                 peakdata.put(e.EventNumber, durationPeaks);
                 end = System.currentTimeMillis();
-                System.out.println("posting to aws took " + (end-start)/1000 + " seconds");
+                System.out.println("posting to store took " + (end-start)/1000 + " seconds");
                 project.close();
 
             }catch (Exception ex){

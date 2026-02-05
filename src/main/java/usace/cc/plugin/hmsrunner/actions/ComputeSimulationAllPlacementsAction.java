@@ -24,7 +24,7 @@ import hms.model.project.ComputeSpecification;
 import usace.cc.plugin.api.DataSource;
 import usace.cc.plugin.api.DataStore;
 import usace.cc.plugin.api.DataStore.DataStoreException;
-import usace.cc.plugin.api.cloud.aws.FileStoreS3;
+import usace.cc.plugin.api.FileStore;
 import usace.cc.plugin.api.IOManager;
 import usace.cc.plugin.api.IOManager.InvalidDataSourceException;
 import usace.cc.plugin.api.Action;
@@ -398,12 +398,12 @@ public class ComputeSimulationAllPlacementsAction {
                 long end = System.currentTimeMillis();
                 eventtimes.put("computing simulation", (end-start)/1000);
                 System.out.println("took " + (end-start)/1000 + " seconds");
-                System.out.println("posting simulation dss to aws " + simulationName.get() + " for event number " + Integer.toString(e.EventNumber));
+                System.out.println("posting simulation dss to store " + simulationName.get() + " for event number " + Integer.toString(e.EventNumber));
 
                 //post simulation dss (for updating hdf files later) - alternatively write time series to tiledb
                 copyOutputFileToRemoteWithEventSubstitution(action, simulationDss, e.EventNumber, modelOutputDestination + simulationName.get() + ".dss");//need to provide event number in the path
                 start = System.currentTimeMillis();
-                eventtimes.put("posting simulation dss to aws", (start-end)/1000);
+                eventtimes.put("posting simulation dss to store", (start-end)/1000);
                 System.out.println("took " + (start-end)/1000 + " seconds");
                 System.out.println("processing peaks " + simulationName.get() + " for event number " + Integer.toString(e.EventNumber));
                 //post peak results to tiledb
@@ -455,8 +455,8 @@ public class ComputeSimulationAllPlacementsAction {
                 
                 copyOutputFileToRemoteWithEventSubstitution(action, excessPrecipOutput, e.EventNumber, modelOutputDestination + exportedPrecipName.get());
                 start = System.currentTimeMillis();
-                eventtimes.put("posting spatial results to aws", (start-end)/1000);
-                System.out.println("posting to aws took " + (start-end)/1000 + " seconds");
+                eventtimes.put("posting spatial results to store", (start-end)/1000);
+                System.out.println("posting to store took " + (start-end)/1000 + " seconds");
                 //close hms (again)
                 project.close();
 
@@ -717,17 +717,17 @@ public class ComputeSimulationAllPlacementsAction {
             return;
         }
         DataStore store = opStore.get();
-        FileStoreS3 s3store = (FileStoreS3)store.getSession();
-        if(s3store == null){
-            System.out.println("could not cast store named " + ds.getStoreName() + " to FileDataStoreS3");
+        FileStore fileStore = (FileStore)store.getSession();
+        if(fileStore == null){
+            System.out.println("could not cast store named " + ds.getStoreName() + " to FileStore");
             System.exit(-1);
             return;
         }
-        
+
         //modify default
         String path = ds.getPaths().get("default").replace("$<eventnumber>", Integer.toString(eventNumber));
         try {
-            s3store.put(is, path);
+            fileStore.put(is, path);
         } catch (DataStoreException e) {
             System.out.println("could not write data to path " + path);
         }

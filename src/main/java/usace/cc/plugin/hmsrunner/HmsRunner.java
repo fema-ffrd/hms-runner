@@ -95,7 +95,7 @@ public class HmsRunner  {
                 break;
             }
         }
-        //push results to s3.
+        //push results to store.
         ioManagerToRemote(mp, modelOutputDestination);
 
         Hms.shutdownEngine();
