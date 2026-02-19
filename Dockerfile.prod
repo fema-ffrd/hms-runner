@@ -6,7 +6,7 @@ ENV PATH=${GRADLE_HOME}/bin:$PATH
 ARG HMS_VERSION=4.13-beta.6
 ARG HMS_PLATFORM=linux64
 ARG HMS_HOME=HEC-HMS-4.13-beta.6
-ARG SDK_VERSION=1.1.1
+ARG SDK_VERSION=1.1.2
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
 #need to get the jdk.
@@ -34,7 +34,7 @@ RUN gradle build --no-daemon -x test
 FROM ubuntu:20.04 AS prod
 
 ARG HMS_HOME=HEC-HMS-4.13-beta.6
-ARG SDK_VERSION=1.1.1
+ARG SDK_VERSION=1.1.2
 
 RUN apt update
 RUN mkdir -p /hms
