@@ -17,7 +17,6 @@ import hec.heclib.dss.DSSErrorMessage;
 import hec.heclib.dss.HecTimeSeries;
 import hec.heclib.util.HecTime;
 import hec.io.TimeSeriesContainer;
-import hms.Hms;
 import hms.model.Project;
 import hms.model.data.SpatialVariableType;
 import hms.model.project.ComputeSpecification;
@@ -554,7 +553,6 @@ public class ComputeSimulationAllPlacementsAction {
                           
             }
             System.out.println("failed events: " + failedEvents);
-            Hms.shutdownEngine();
             return;
         }
         //create header row //
@@ -617,7 +615,6 @@ public class ComputeSimulationAllPlacementsAction {
         } catch (Exception e1) {
             System.out.println("failed writing timelogs");
         }
-        Hms.shutdownEngine();
         return;
     }
 
