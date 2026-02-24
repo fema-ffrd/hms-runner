@@ -91,6 +91,10 @@ public class HmsRunner  {
                     DssToCsvAction dca = new DssToCsvAction(a);
                     dca.computeAction();
                     break;
+                case "dss_to_parquet":
+                    DssToParquetAction dtpa = new DssToParquetAction(a);
+                    dtpa.computeAction();
+                    break;
                 default:
                 break;
             }
