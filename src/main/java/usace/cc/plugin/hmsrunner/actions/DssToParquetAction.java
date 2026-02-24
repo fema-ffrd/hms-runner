@@ -167,9 +167,14 @@ public class DssToParquetAction {
                     "groups", parquetGroups.size(),
                     "elapsed_seconds", convertSec);
 
+            String dssFileName = sourcePath.substring(sourcePath.lastIndexOf('/') + 1);
+            String dssStem = dssFileName.contains(".")
+                    ? dssFileName.substring(0, dssFileName.lastIndexOf('.'))
+                    : dssFileName;
+
             long uploadStart = System.currentTimeMillis();
             for (Map.Entry<String, byte[]> entry : parquetGroups.entrySet()) {
-                String destPath = buildDestPath(destPathTemplate, eventId, entry.getKey());
+                String destPath = buildDestPath(destPathTemplate, eventId, dssStem, entry.getKey());
                 log.info("dss_to_parquet uploading parquet",
                         "event_id", eventId,
                         "group", entry.getKey(),
@@ -192,15 +197,15 @@ public class DssToParquetAction {
     }
 
     // Constructs the destination path for a given fKey.
-    // "$<eventnumber>" is substituted, then the directory portion is kept and fKey.parquet appended.
-    private String buildDestPath(String template, int eventId, String fKey) {
+    // "$<eventnumber>" is substituted, then the directory portion is kept and dssStem.fKey.parquet appended.
+    private String buildDestPath(String template, int eventId, String dssStem, String fKey) {
         String path = template.replace("$<eventnumber>", Integer.toString(eventId));
         if (path.endsWith("/")) {
-            return path + fKey + ".parquet";
+            return path + dssStem + "." + fKey + ".parquet";
         }
         int slash = path.lastIndexOf('/');
         String dir = slash >= 0 ? path.substring(0, slash + 1) : "";
-        return dir + fKey + ".parquet";
+        return dir + dssStem + "." + fKey + ".parquet";
     }
 
     private Map<String, byte[]> convertDssToParquet(String dssFilePath, int eventId) {
